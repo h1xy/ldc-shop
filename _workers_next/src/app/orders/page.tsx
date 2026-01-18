@@ -4,7 +4,7 @@ import { orders, reviews } from "@/lib/db/schema"
 import { eq, desc, inArray } from "drizzle-orm"
 import { redirect } from "next/navigation"
 import { OrdersContent } from "@/components/orders-content"
-import { cancelExpiredOrders } from "@/lib/db/queries"
+import { cancelExpiredOrders, normalizeTimestampMs } from "@/lib/db/queries"
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +20,7 @@ export default async function OrdersPage() {
 
     const userOrders = await db.query.orders.findMany({
         where: eq(orders.userId, session.user.id || ''),
-        orderBy: [desc(orders.createdAt)]
+        orderBy: [desc(normalizeTimestampMs(orders.createdAt))]
     })
 
     // Get reviewed order IDs for delivered orders

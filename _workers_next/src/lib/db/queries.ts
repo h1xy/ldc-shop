@@ -389,7 +389,7 @@ export async function getDashboardStats() {
 export async function getRecentOrders(limit: number = 10) {
     return await withOrderColumnFallback(async () => {
         return await db.query.orders.findMany({
-            orderBy: [desc(orders.createdAt)],
+            orderBy: [desc(normalizeTimestampMs(orders.createdAt))],
             limit
         })
     })
@@ -683,6 +683,10 @@ function isMissingTableOrColumn(error: any) {
 
 const TIMESTAMP_MS_THRESHOLD = 1_000_000_000_000;
 
+export function normalizeTimestampMs(column: any) {
+    return sql<number>`CASE WHEN ${column} < ${TIMESTAMP_MS_THRESHOLD} THEN ${column} * 1000 ELSE ${column} END`
+}
+
 async function migrateTimestampColumnsToMs() {
     const tableColumns = [
         { table: 'products', columns: ['created_at'] },
@@ -973,5 +977,5 @@ export async function getUserPendingOrders(userId: string) {
             eq(orders.userId, userId),
             eq(orders.status, 'pending')
         ))
-        .orderBy(desc(orders.createdAt));
+        .orderBy(desc(normalizeTimestampMs(orders.createdAt)));
 }

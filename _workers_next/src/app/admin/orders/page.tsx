@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { orders } from "@/lib/db/schema"
 import { and, desc, eq, or, sql } from "drizzle-orm"
 import { AdminOrdersContent } from "@/components/admin/orders-content"
-import { cancelExpiredOrders, withOrderColumnFallback } from "@/lib/db/queries"
+import { cancelExpiredOrders, normalizeTimestampMs, withOrderColumnFallback } from "@/lib/db/queries"
 import { PAYMENT_PRODUCT_ID } from "@/lib/payment"
 
 export const dynamic = 'force-dynamic';
@@ -65,7 +65,7 @@ export default async function AdminOrdersPage(props: {
         return await Promise.all([
             db.query.orders.findMany({
                 where: whereExpr,
-                orderBy: [desc(orders.createdAt)],
+                orderBy: [desc(normalizeTimestampMs(orders.createdAt))],
                 limit: pageSize,
                 offset,
             }),
