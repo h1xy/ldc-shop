@@ -61,7 +61,7 @@ export async function SiteHeader() {
                 <div className="hidden md:flex flex-1 justify-center px-4">
                     {/* HeaderSearch removed as per user request */}
                 </div>
-                <div className="flex items-center justify-end gap-2 md:gap-3">
+                <div className="ml-auto flex items-center justify-end gap-2 md:gap-3">
                     <nav className="flex items-center space-x-1 rounded-full border border-border/20 bg-muted/20 px-1.5 py-1 md:px-2">
                         <LanguageSwitcher />
                         <ModeToggle />
